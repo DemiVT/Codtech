@@ -1,75 +1,101 @@
 -- Create Tables
-CREATE TABLE Products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    product_name VARCHAR(255) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    stock_quantity INT DEFAULT 0,
-    category VARCHAR(100)
-);
 
-CREATE TABLE Customers (
-    customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+CREATE TABLE Students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    date_of_birth DATE,
     email VARCHAR(255) UNIQUE,
-    address TEXT,
     phone_number VARCHAR(15)
 );
 
-CREATE TABLE Orders (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    order_date DATE NOT NULL,
-    total_amount DECIMAL(10, 2),
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+CREATE TABLE Courses (
+    course_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(255) NOT NULL,
+    course_code VARCHAR(20) UNIQUE,
+    credits INT
 );
 
-CREATE TABLE Order_Items (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT,
-    product_id INT,
-    quantity INT NOT NULL,
-    price DECIMAL(10, 2),
-    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+CREATE TABLE Enrollments (
+    enrollment_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    grade CHAR(2),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
 );
 
 -- Insert Sample Data
-INSERT INTO Products (product_name, price, stock_quantity, category)
+
+INSERT INTO Students (first_name, last_name, date_of_birth, email, phone_number) 
 VALUES 
-    ('Laptop', 999.99, 10, 'Electronics'),
-    ('Smartphone', 499.99, 25, 'Electronics'),
-    ('Desk Chair', 89.99, 15, 'Furniture');
+    ('John', 'Doe', '2002-05-15', 'john.doe@example.com', '555-1234'),
+    ('Jane', 'Smith', '2003-08-22', 'jane.smith@example.com', '555-5678');
 
-INSERT INTO Customers (name, email, address, phone_number)
+INSERT INTO Courses (course_name, course_code, credits)
 VALUES 
-    ('Alice Smith', 'alice.smith@example.com', '123 Main St', '555-5678'),
-    ('Bob Johnson', 'bob.johnson@example.com', '456 Oak St', '555-8765');
+    ('Introduction to Programming', 'CS101', 3),
+    ('Database Systems', 'CS102', 4),
+    ('Data Structures', 'CS103', 3);
 
-INSERT INTO Orders (customer_id, order_date, total_amount)
+INSERT INTO Enrollments (student_id, course_id, enrollment_date, grade)
 VALUES 
-    (1, '2024-08-25', 999.99),
-    (2, '2024-08-26', 589.98);
+    (1, 1, '2024-08-20', 'A'),
+    (2, 2, '2024-08-21', 'B');
 
-INSERT INTO Order_Items (order_id, product_id, quantity, price)
-VALUES 
-    (1, 1, 1, 999.99),
-    (2, 2, 1, 499.99),
-    (2, 3, 1, 89.99);
+-- Basic SQL Commands
 
--- Interactive Queries
--- 1. Find Products by Category
-SELECT * FROM Products WHERE category = 'Electronics';
+-- Retrieve all students
+SELECT * FROM Students;
 
--- 2. Get Total Sales by Product
-SELECT p.product_name, SUM(oi.quantity) AS total_quantity_sold
-FROM Order_Items oi
-JOIN Products p ON oi.product_id = p.product_id
-GROUP BY p.product_name;
+-- Insert a new student
+INSERT INTO Students (first_name, last_name, date_of_birth, email, phone_number)
+VALUES ('Alice', 'Johnson', '2004-03-17', 'alice.johnson@example.com', '555-7890');
 
--- 3. List All Orders with Customer Details
-SELECT o.order_id, c.name AS customer_name, o.order_date, o.total_amount
-FROM Orders o
-JOIN Customers c ON o.customer_id = c.customer_id;
+-- Update student email
+UPDATE Students
+SET email = 'new.email@example.com'
+WHERE student_id = 1;
 
--- 4. Check Stock Levels for Products
-SELECT product_name, stock_quantity FROM Products;
+-- Delete a student
+DELETE FROM Students
+WHERE email = 'jane.smith@example.com';
+
+-- Retrieve all courses
+SELECT * FROM Courses;
+
+-- Add a new course
+INSERT INTO Courses (course_name, course_code, credits)
+VALUES ('Computer Networks', 'CS104', 3);
+
+-- Update course credits
+UPDATE Courses
+SET credits = 4
+WHERE course_code = 'CS101';
+
+-- Delete a course
+DELETE FROM Courses
+WHERE course_code = 'CS102';
+
+-- Retrieve all enrollments
+SELECT * FROM Enrollments;
+
+-- Enroll a student in a course
+INSERT INTO Enrollments (student_id, course_id, enrollment_date, grade)
+VALUES (2, 3, '2024-09-01', 'A');
+
+-- Update student grade
+UPDATE Enrollments
+SET grade = 'A+'
+WHERE enrollment_id = 1;
+
+-- Delete an enrollment
+DELETE FROM Enrollments
+WHERE enrollment_id = 2;
+
+-- Join Students, Courses, and Enrollments to retrieve detailed records
+SELECT s.first_name, s.last_name, c.course_name, e.grade
+FROM Enrollments e
+JOIN Students s ON e.student_id = s.student_id
+JOIN Courses c ON e.course_id = c.course_id;
