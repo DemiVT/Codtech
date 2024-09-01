@@ -1,4 +1,5 @@
 -- Create Tables
+
 CREATE TABLE Books (
     book_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -28,6 +29,7 @@ CREATE TABLE Transactions (
 );
 
 -- Insert Sample Data
+
 INSERT INTO Books (title, author, isbn, publish_year, genre, available_copies) 
 VALUES 
     ('The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 1925, 'Fiction', 5),
@@ -44,22 +46,44 @@ VALUES
     (1, 1, '2024-08-01'),
     (2, 2, '2024-08-15');
 
--- Interactive Queries
--- 1. Find Books by Author
-SELECT * FROM Books WHERE author = 'Harper Lee';
+-- Basic SQL Commands
 
--- 2. Check Available Copies
-SELECT title, available_copies FROM Books WHERE book_id = 1;
+-- Retrieve all books
+SELECT * FROM Books;
 
--- 3. List All Transactions
-SELECT t.transaction_id, b.title, m.name, t.borrow_date, t.return_date
-FROM Transactions t
-JOIN Books b ON t.book_id = b.book_id
-JOIN Members m ON t.member_id = m.member_id;
+-- Insert a new book
+INSERT INTO Books (title, author, isbn, publish_year, genre, available_copies)
+VALUES ('Brave New World', 'Aldous Huxley', '9780060850524', 1932, 'Dystopian', 6);
 
--- 4. Find Members with Late Returns
-SELECT m.name, t.book_id, b.title, t.borrow_date, t.return_date
-FROM Transactions t
-JOIN Books b ON t.book_id = b.book_id
-JOIN Members m ON t.member_id = m.member_id
-WHERE t.return_date IS NULL;
+-- Update available copies of a book
+UPDATE Books
+SET available_copies = 2
+WHERE book_id = 2;
+
+-- Delete a book
+DELETE FROM Books
+WHERE isbn = '9780743273565';
+
+-- Retrieve all members
+SELECT * FROM Members;
+
+-- Add a new member
+INSERT INTO Members (name, email, phone_number, membership_date)
+VALUES ('Alice Johnson', 'alice.johnson@example.com', '555-7890', '2024-09-01');
+
+-- Update member email
+UPDATE Members
+SET email = 'new.email@example.com'
+WHERE member_id = 1;
+
+-- Delete a member
+DELETE FROM Members
+WHERE email = 'janesmith@example.com';
+
+-- Retrieve all transactions
+SELECT * FROM Transactions;
+
+-- Record a book return (update return date)
+UPDATE Transactions
+SET return_date = '2024-09-01'
+WHERE transaction_id = 1;
